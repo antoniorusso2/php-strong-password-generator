@@ -1,64 +1,76 @@
 <?php
 
+function initializePassword(array $arrays): array
+{
+    foreach ($arrays as $array) {
+        //recupero l'ultimo index
+        $last_index = count($array) - 1;
+        //aggiungo un carattere casuale per ogni elemento dell'array alla password che alla fine verrà mescolata
+        $password[] = $array[random_int(0, $last_index)];
+    }
+
+    return $password;
+}
+
 //1. CREAZIONE DELLA PASSWORD
 //- impostare un array con un alfabeto
 //- array con numeri da 0 a 9
 //- array con simboli
+$lowercase = range('a', 'z');
+$uppercase = range('A', 'Z');
+$numbers = range(0, 9);
 
 $password_rules = [
-    "length" =>  5,
+    "length" =>  $_GET['length'] ?? 8,
     "uppercase" =>  1,
     "lowercase" =>  1,
     "numbers" =>  1,
     "symbols" =>  1
 ];
 
-$lowercase = range('a', 'z'); //funzione range ritorna un array di valori compresi tra il primo parametro che indica il punto di inizio ed il parametro finale
-
-$uppercase = range('A', 'Z');
-
-//array che comprende lettere maiuscole e minuscole
-$alphabet = array_merge($lowercase, $uppercase);
-
-$numbers = range(0, 9);
-
 $symbols = ['!', '@', '#', '$', '%', '&', '*'];
 
 $password_characters = [
-    &$alphabet,
-    &$numbers,
-    &$symbols
+    $lowercase,
+    $uppercase,
+    $numbers,
+    $symbols
 ];
 
+$password = initializePassword($password_characters); //inizializzazione password
 // var_dump($alphabet);
 
-function generatePassword(array $rules, array $characters_lists): string
+function generatePassword(array $rules, array &$characters_lists): string
 {
-    $password = ''; //inizializzazione password
+    global $password;
 
-    while (strlen($password) < $rules["length"]) {
-        //genero un numero casuale tra 0 e 2 per prendere l'array di caratteri corrispondente
-        $random_index = random_int(0, 2); // array_index
+    while (count($password) < $rules['length']) {
+
+        //genero un numero casuale tra 0 e 2 per prendere l'array di caratteri corrispondente tramite index
+        $random_list_index = random_int(0, count($characters_lists) - 1); // array_index
 
         //array di caratteri casuale tra lettere simboli e numeri
-        $random_characters_list = $characters_lists[$random_index];
+        $characters = &$characters_lists[$random_list_index]; //array di caratteri
+
+        //random index per il singolo carattere
+        $random_character_index = random_int(0, count($characters) - 1);
 
         //elemento casuale dall'array di caratteri
-        $random_character = $random_characters_list[random_int(0, count($random_characters_list) - 1)];
+        $random_character = &$characters[$random_character_index];
 
-        //se il carattere non è gia presente in array lo vado ad aggiungere
-        // if (!str_contains($random_character, $password)) {
-        //     // $password .= $random_character;
-        //     echo "\n $random_character is already in $password";
-        // }
+        // var_dump("char:", $random_character, "\n",  !str_contains($password, $random_character));
 
-        $password .= $random_character;
-
-
-        //controllo che sia presente almeno un carattere minuscolo uno maiuscolo, un numero ed un simbolo
+        //se il carattere non è gia presente nella password lo vado ad aggiungere
+        if (!in_array($random_character, $password)) {
+            $password[] = $random_character;
+        }
     }
 
-    return $password;
+    //mischio i caratteri in array
+    shuffle($password);
+
+    //ritorno la password sotto forma di stringa
+    return implode($password);
 }
 
 ?>
@@ -75,20 +87,34 @@ function generatePassword(array $rules, array $characters_lists): string
 </head>
 
 <body>
-    <div class="container">
-        <div class="row">
-            <div class="col-12">
-                <h1>
-                    Password generator
-                </h1>
-            </div>
-            <p>
-                password:
-                <?php echo "<br>" . generatePassword($password_rules, $password_characters) ?>
-            </p>
-        </div>
-    </div>
+    <main class="main-content">
 
+        <div class="col-12">
+            <h1>
+                Password generator
+            </h1>
+        </div>
+
+        <section class="password-requirements">
+            <div class="container">
+                <div class="row">
+                    <form class="col-12 form" action="">
+                        <label for="length">Inserisci la lunghezza desiderata per la password</label>
+                        <input type="number" name="length" id="length" value="8" min="8" max="32">
+
+                        <button type="submit">Crea</button>
+                    </form>
+                    <p>
+                        password:
+                        <?php
+
+                        echo "<br>" . generatePassword($password_rules, $password_characters);
+                        ?>
+                    </p>
+                </div>
+            </div>
+        </section>
+    </main>
 </body>
 
 </html>
