@@ -1,17 +1,7 @@
 <?php
-
-function initializePassword(array $arrays): array
-{
-    foreach ($arrays as $array) {
-        //recupero l'ultimo index
-        $last_index = count($array) - 1;
-        //aggiungo un carattere casuale per ogni elemento dell'array alla password che alla fine verrà mescolata
-        $password[] = $array[random_int(0, $last_index)];
-    }
-
-    return $password;
-}
-
+require_once("./functions.php");
+session_start();
+// session_destroy();
 //1. CREAZIONE DELLA PASSWORD
 //- impostare un array con un alfabeto
 //- array con numeri da 0 a 9
@@ -19,16 +9,17 @@ function initializePassword(array $arrays): array
 $lowercase = range('a', 'z');
 $uppercase = range('A', 'Z');
 $numbers = range(0, 9);
+$symbols = ['!', '@', '#', '$', '%', '&', '*'];
+
+$length = isset($_POST['length']) ? $_POST['length'] : 8;
 
 $password_rules = [
-    "length" =>  $_GET['length'] ?? 8,
-    "uppercase" =>  1,
-    "lowercase" =>  1,
-    "numbers" =>  1,
-    "symbols" =>  1
+    "length" =>  (int)$length,
+    "uppercase" =>  true,
+    "lowercase" =>  true,
+    "numbers" =>  true,
+    "symbols" =>  true
 ];
-
-$symbols = ['!', '@', '#', '$', '%', '&', '*'];
 
 $password_characters = [
     $lowercase,
@@ -37,40 +28,14 @@ $password_characters = [
     $symbols
 ];
 
-$password = initializePassword($password_characters); //inizializzazione password
-// var_dump($alphabet);
-
-function generatePassword(array $rules, array &$characters_lists): string
-{
-    global $password;
-
-    while (count($password) < $rules['length']) {
-
-        //genero un numero casuale tra 0 e 2 per prendere l'array di caratteri corrispondente tramite index
-        $random_list_index = random_int(0, count($characters_lists) - 1); // array_index
-
-        //array di caratteri casuale tra lettere simboli e numeri
-        $characters = &$characters_lists[$random_list_index]; //array di caratteri
-
-        //random index per il singolo carattere
-        $random_character_index = random_int(0, count($characters) - 1);
-
-        //elemento casuale dall'array di caratteri
-        $random_character = &$characters[$random_character_index];
-
-        // var_dump("char:", $random_character, "\n",  !str_contains($password, $random_character));
-
-        //se il carattere non è gia presente nella password lo vado ad aggiungere
-        if (!in_array($random_character, $password)) {
-            $password[] = $random_character;
-        }
-    }
-
-    //mischio i caratteri in array
-    shuffle($password);
-
-    //ritorno la password sotto forma di stringa
-    return implode($password);
+if (isset($_POST['length']) && $_POST['length'] != '') {
+    $password = generatePassword($password_rules, $password_characters);
+    $_SESSION['password'] = &$password;
+    // var_dump(isset($_POST['length']));
+    header('Location: ./result.php');
+    exit();
+} else {
+    print('Selezionare un numero da 8 a 32');
 }
 
 ?>
@@ -98,19 +63,12 @@ function generatePassword(array $rules, array &$characters_lists): string
         <section class="password-requirements">
             <div class="container">
                 <div class="row">
-                    <form class="col-12 form" action="">
+                    <form class="col-12 form" method="post">
                         <label for="length">Inserisci la lunghezza desiderata per la password</label>
-                        <input type="number" name="length" id="length" value="8" min="8" max="32">
+                        <input type="number" name="length" id="length" min="8" max="32">
 
-                        <button type="submit">Crea</button>
+                        <button class="btn" type="submit">Crea Password</button>
                     </form>
-                    <p>
-                        password:
-                        <?php
-
-                        echo "<br>" . generatePassword($password_rules, $password_characters);
-                        ?>
-                    </p>
                 </div>
             </div>
         </section>

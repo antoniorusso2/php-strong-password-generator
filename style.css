@@ -14,11 +14,17 @@ html {
 a {
   text-decoration: none;
   color: inherit;
+  padding: 0.8rem 1.2rem;
 }
 
 ul,
 ol {
   list-style: none;
+}
+
+button {
+  border: none;
+  cursor: pointer;
 }
 
 /* COMMON */
@@ -47,4 +53,45 @@ main {
 
 .col-12 {
   width: 100%;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  align-items: center;
+  gap: 1.2rem;
+}
+
+input[type='number'] {
+  width: 4rem;
+  height: 2rem;
+  border: 1px solid #9f9f9f;
+  border-radius: 0.4rem;
+  text-align: center;
+}
+
+input[type='number']:focus-visible {
+  border: 1px solid #ffb433;
+}
+
+.password {
+  width: max-content;
+  text-align: center;
+  border: 1px solid #9f9f9f;
+  padding: 2rem 3.5rem;
+  border-radius: 0.7rem;
+  margin: 2rem auto;
+}
+
+.btn {
+  display: block;
+  width: fit-content;
+  margin: 0 auto;
+  font-size: 1rem;
+  color: aliceblue;
+  background-color: #ffb433;
+  padding: 0.8rem 1.2rem;
+  border-radius: 0.4rem;
+  transition: all 0.25s ease-in-out;
 }
