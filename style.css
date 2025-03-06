@@ -95,3 +95,11 @@ input[type='number']:focus-visible {
   border-radius: 0.4rem;
   transition: all 0.25s ease-in-out;
 }
+
+.message {
+  background-color: crimson;
+  display: block;
+  margin: 0 auto;
+  padding: 0.5rem 1.2rem;
+  text-align: center;
+}

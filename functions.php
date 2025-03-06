@@ -12,10 +12,36 @@ function initializePassword(array $arrays): array
     return $password;
 }
 
-function generatePassword(array $rules, array &$characters_lists): string
+function generatePassword(array $rules): string
 {
-    $password = initializePassword($characters_lists); //inizializzazione password
+    // $password = initializePassword($characters_lists); //inizializzazione password
     // var_dump($rules);
+    $lowercase = range('a', 'z');
+    $uppercase = range('A', 'Z');
+    $numbers = range(0, 9);
+    $symbols = ['!', '@', '#', '$', '%', '&', '*'];
+
+    $password_characters = [];
+    if ($rules['uppercase']) {
+        $password_characters[] = $uppercase;
+    }
+
+    if ($rules['lowercase']) {
+        $password_characters[] = $lowercase;
+    }
+
+    if ($rules['numbers']) {
+        $password_characters[] = $numbers;
+    }
+
+    if ($rules['symbols']) {
+        $password_characters[] = $symbols;
+    }
+
+
+    $characters_lists = $password_characters;
+
+    $password = [];
 
     while (count($password) < $rules['length']) {
         //genero un numero casuale tra 0 e 2 per prendere l'array di caratteri corrispondente tramite index
@@ -37,6 +63,7 @@ function generatePassword(array $rules, array &$characters_lists): string
     }
 
     //mischio i caratteri in array
+    // var_dump($password);
     shuffle($password);
 
     //ritorno la password sotto forma di stringa

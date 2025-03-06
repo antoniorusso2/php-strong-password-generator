@@ -6,36 +6,29 @@ session_start();
 //- impostare un array con un alfabeto
 //- array con numeri da 0 a 9
 //- array con simboli
-$lowercase = range('a', 'z');
-$uppercase = range('A', 'Z');
-$numbers = range(0, 9);
-$symbols = ['!', '@', '#', '$', '%', '&', '*'];
 
-$length = isset($_POST['length']) ? $_POST['length'] : 8;
+
+$length = $_POST['length'] ?? '';
+
 
 $password_rules = [
     "length" =>  (int)$length,
-    "uppercase" =>  true,
-    "lowercase" =>  true,
-    "numbers" =>  true,
-    "symbols" =>  true
+    "uppercase" =>  $_POST['uppercase'] ?? false,
+    "lowercase" =>  $_POST['lowercase'] ?? false,
+    "numbers" =>  $_POST['numbers'] ?? false,
+    "symbols" =>  $_POST['symbols'] ?? false
 ];
 
-$password_characters = [
-    $lowercase,
-    $uppercase,
-    $numbers,
-    $symbols
-];
 
-if (isset($_POST['length']) && $_POST['length'] != '') {
-    $password = generatePassword($password_rules, $password_characters);
+
+if (isset($length) && $length != '') {
+    $password = generatePassword($password_rules);
     $_SESSION['password'] = &$password;
-    // var_dump(isset($_POST['length']));
+
     header('Location: ./result.php');
     exit();
 } else {
-    print('Selezionare un numero da 8 a 32');
+    echo ('<div class="message">Selezionare un numero da 8 a 32</div>');
 }
 
 ?>
@@ -63,9 +56,21 @@ if (isset($_POST['length']) && $_POST['length'] != '') {
         <section class="password-requirements">
             <div class="container">
                 <div class="row">
-                    <form class="col-12 form" method="post">
+                    <form class="col-12 form" action="./index.php" method="post">
                         <label for="length">Inserisci la lunghezza desiderata per la password</label>
-                        <input type="number" name="length" id="length" min="8" max="32">
+                        <input type="number" name="length" value="8" id="length" min="8" max="32">
+
+                        <label for="uppercase">Includi lettere maiuscole</label>
+                        <input type="checkbox" name="uppercase" id="uppercase" checked>
+
+                        <label for="lowercase">Includi lettere minuscole</label>
+                        <input type="checkbox" name="lowercase" id="lowercase" checked>
+
+                        <label for="numbers">Includi numeri</label>
+                        <input type="checkbox" name="numbers" id="numbers" checked>
+
+                        <label for="symbols">Includi simboli</label>
+                        <input type="checkbox" name="symbols" id="symbols" checked>
 
                         <button class="btn" type="submit">Crea Password</button>
                     </form>

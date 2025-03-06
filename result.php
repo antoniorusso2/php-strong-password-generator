@@ -21,7 +21,7 @@ session_start();
                 </h1>
                 <div class="password">
                     <?php
-                    // var_dump($_SESSION);
+
                     echo $_SESSION["password"] ?>
                 </div>
                 <div class="go-to-homepage">
